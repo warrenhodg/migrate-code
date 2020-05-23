@@ -2,6 +2,7 @@ package code
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"strings"
@@ -14,7 +15,7 @@ type Migration func() ([]*source.Migration, error)
 
 // Errors
 var (
-	ErrFactoryNotFound = errors.New("migration factory not found")
+	ErrFactoryNotFound = errors.New("migrate-code factory not found")
 	ErrNotFound        = errors.New("not found")
 )
 
@@ -37,7 +38,7 @@ type Code struct {
 func (c *Code) Open(url string) (source.Driver, error) {
 	f, found := factories[url]
 	if !found {
-		return nil, ErrFactoryNotFound
+		return nil, fmt.Errorf("%w: %s", ErrFactoryNotFound, url)
 	}
 
 	cms, err := f()
