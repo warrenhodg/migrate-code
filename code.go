@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/url"
 	"strings"
 
 	"github.com/golang-migrate/migrate/v4/source"
@@ -35,10 +36,19 @@ type Code struct {
 }
 
 // Open calls the relevant function to get its migrations
-func (c *Code) Open(url string) (source.Driver, error) {
-	f, found := factories[url]
+// The url passed in should be of the form "code://xyz"
+// where xyz is a registered code factory in your own code.
+func (c *Code) Open(fullUrl string) (source.Driver, error) {
+	u, err := url.Parse(fullUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	migrateFactory := u.Opaque
+
+	f, found := factories[migrateFactory]
 	if !found {
-		return nil, fmt.Errorf("%w: %s", ErrFactoryNotFound, url)
+		return nil, fmt.Errorf("%w: %s", ErrFactoryNotFound, migrateFactory)
 	}
 
 	cms, err := f()
