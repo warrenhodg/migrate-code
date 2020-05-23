@@ -9,24 +9,12 @@ package sqlitemigration
 
 import (
 	"github.com/warrenhodg/migrate-code"
-
-	"github.com/golang-migrate/migrate/v4/source"
 )
 
-func get() ([]*source.Migration, error) {
-	return []*source.Migration{
-		{
-			Version:    1,
-			Identifier: "Create channels table",
-			Direction:  source.Up,
-			Raw:        "CREATE TABLE IF NOT EXISTS channels ( id TEXT PRIMARY KEY, value TEXT NOT NULL );",
-		},
-		{
-			Version:    1,
-			Identifier: "Delete channels table",
-			Direction:  source.Down,
-			Raw:        "DROP TABLE IF EXISTS channels",
-		},
+func get() (map[string]string, error) {
+	return map[string]string{
+    "1_create channels table.up.sql": "CREATE TABLE IF NOT EXISTS channels ( id TEXT PRIMARY KEY, value TEXT NOT NULL );",
+    "1_create channels table.down.sql": "DROP TABLE IF EXISTS channels",
 	}, nil
 }
 
